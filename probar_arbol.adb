@@ -40,9 +40,9 @@ procedure Probar_Arbol is
          ins_tabla(tabla,ingresar);
       end loop;
       
---      -- Imprimimos elementos
---      for I in 0..8 loop --El rango tiene que ser de 0..8 para imprimir
---        put_line(integer'image(imprimir(tabla,i)));
---       end loop;
+
+if Buscar(Tabla,11) then
+          put_line("fGFGHFH");
+          end if;
 --      
    end Probar_Arbol;

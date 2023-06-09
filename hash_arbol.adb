@@ -38,4 +38,10 @@ package body Hash_arbol is
       end loop;
       end Ins_Tabla;
   
+  function Buscar(Vec: in Thash; elemen: in Tipoelemento) return Boolean is
+    begin
+      return esta(vec.tabla(hash(elemen)),elemen);
+         
+    end Buscar;
+    
 end Hash_arbol;

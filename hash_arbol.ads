@@ -13,7 +13,7 @@ generic
       
       type Thash is private;
       procedure Ins_Tabla(Vec: in out Thash; Elemento: in Tipoelemento); -- Agrega los elementos en el vector 
-
+      function Buscar(Vec: in Thash; Elemen: in Tipoelemento) return Boolean;
       private
          
          -- Paquete arbol
@@ -58,4 +58,4 @@ generic
 --   package hashinc is new Hash_arbol(integer, Indice, "=", ">", "<", Hash); -- hash de arbol de integer
 --   use hashinc;
    
---	 tabla: Thash;    
+--	 tabla: Thash;     
