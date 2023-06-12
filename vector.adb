@@ -1,6 +1,5 @@
---Cuerpo de un paquete generico - parte oculta
 With Ada.Text_Io; use ada.Text_IO;
-package body Vector is -- body, especificacion e implementacion
+package body Vector is
    
    procedure Leer (Vec: out Tipovec) is
    

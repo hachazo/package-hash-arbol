@@ -1,35 +1,41 @@
 generic
+   type Elemento is private;
    
-   type Tipoelem is private;
-   with function "<" (X, Y: Tipoelem) return Boolean;
-   with function ">" (X, Y: Tipoelem) return Boolean;
-   with procedure Put (X: in TipoElem);
-   
+   with function "<" (X,Y:Elemento) return Boolean;
+   with function ">" (X,Y:Elemento) return Boolean;
+   with function "=" (X,Y:Elemento) return Boolean;
+
    package Arbol is
       
-      type Tipoarbol is private;
+	  type Tarbol is private;
+      function Vacio (Raiz:Tarbol) return Boolean;
+      procedure Insertar(Raiz:in out Tarbol; Elem: in Elemento);
+      procedure Suprimir(Raiz:in out Tarbol; Valsup: in Elemento);
+	  
+	  function Esta (Raiz: in Tarbol; Buscado: in Elemento) return Boolean;
+	  function buscar (Raiz: in Tarbol; Buscado: in Elemento) return Elemento;
       
-      function Vacio (Raiz: Tipoarbol) return Boolean;
-      procedure Insertar(Raiz: in out Tipoarbol; Elemento: in Tipoelem);
-      procedure Suprimir(Arbol: in out TipoArbol; ValSup: in TipoElem);
-      function Esta(Raiz: in TipoArbol; Buscado: in TipoElem) return Boolean;
-      procedure Limpiar(Ptr: in out TipoArbol);
-      function Izq(Ptr: TipoArbol) return TipoArbol;
-      function Der(Ptr: TipoArbol) return TipoArbol;
-      function Info(Ptr: Tipoarbol) return Tipoelem;
-      procedure Inorden (Ptr: in Tipoarbol); -- Imprime los elementos en orden de menor a mayor.
-      procedure Preorden (Ptr: in Tipoarbol); --Imprime
-      procedure Posorden (ptr: in tipoarbol); -- Imprime
-      Arbolvacio: exception;
-   
-      private
+	  procedure Limpiar (Ptr: in out Tarbol);
       
-      type Tiponodo;
-      type Tipoarbol is access Tiponodo;
+	  function Izq (Ptr: Tarbol) return Tarbol;
+      function der (Ptr: Tarbol) return Tarbol;
+      function Info (Ptr: Tarbol) return Elemento;
+      
+	  Arbolvacio:exception;
+      
+	  private
+      type Tiponodo ;
+      type Tarbol is access Tiponodo;
       type Tiponodo is
-      record
-         Info: Tipoelem;
-         Izq, Der: Tipoarbol;
-   end record;
-   
-end arbol;
+      
+	  record
+         Info:Elemento;
+         Izq:Tarbol;
+         Der:Tarbol;
+		 end record;
+      
+	  end arbol;
+      
+
+
+      

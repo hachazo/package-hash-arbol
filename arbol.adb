@@ -1,126 +1,119 @@
 with Ada.Unchecked_Deallocation;
 package body Arbol is
-   procedure Free is new Ada.Unchecked_Deallocation(Tiponodo, Tipoarbol);
    
-   function Vacio (Raiz: Tipoarbol) return Boolean is
+   procedure Free is new Ada.Unchecked_Deallocation (Tiponodo,Tarbol);
+   function Vacio (Raiz:Tarbol) return Boolean is
    begin
-      return Raiz = null;
+      return Raiz=null;
    end Vacio;
-   
-   procedure Limpiar (Ptr: in out Tipoarbol) is
+   procedure Limpiar (Ptr:in out Tarbol) is
    begin
-      if not Vacio (Ptr) then
+      if not Vacio(Ptr)then
          Limpiar(Ptr.Izq);
-         Limpiar(Ptr.Der);
-         Free(Ptr);
+         Limpiar(Ptr.Der);         
+		 Free(Ptr);
       end if;
    end Limpiar;
-   
-   procedure Insertar (Raiz: in out Tipoarbol; Elemento: in Tipoelem) is
+   procedure Insertar (Raiz:in out Tarbol; Elem: in Elemento) is
+      Newnodo:Tarbol:=new Tiponodo'(Elem, null, null);
+      Ptr:Tarbol:=Raiz;
+      Anterior:Tarbol:=null;
    begin
-      if Raiz = null then Raiz:= new Tiponodo'(Elemento, null, null);
-      elsif Elemento < Raiz.Info then Insertar (Raiz.Izq, Elemento);
-      else Insertar (Raiz.Der, Elemento);
-      end if;
-   end Insertar;
-   
-   procedure Suprimirnodo (Ptr: in out Tipoarbol) is
-      Anterior: Tipoarbol;
-      Temp: Tipoarbol:= Ptr;
-   begin
-      if Ptr.Der = null
-            then Ptr:=Ptr.Izq;
-      else if Ptr.Izq = null
-               then Ptr:= Ptr.Der;
-         else
-            Temp:= Ptr.Izq;
-            Anterior:= Ptr;
-            while Temp.Der /= null loop
-               Anterior:= Temp;
-               Temp:= Temp.Der;
-            end loop;
-            Ptr.Info:= Temp.Info;
-            if Anterior = Ptr then Anterior.Izq:= Temp.Izq;
-            else Anterior.Der:= Temp.Izq;
-            end if;
+      while Ptr/= null loop
+         Anterior:=Ptr;
+         if Ptr.Info>Elem then Ptr:=Ptr.Izq;
+         else Ptr:=Ptr.Der;
          end if;
-      end if;
-      Free(Temp);
-   end Suprimirnodo;
-        
-
-   procedure Suprimir (Arbol: in out Tipoarbol; Valsup: in Tipoelem) is
+      end loop;
+      if Anterior =null then Raiz:=Newnodo;
+      else 
+         if Anterior.Info>Elem then
+            Anterior.Izq:=Newnodo;
+            else 
+            Anterior.Der:=Newnodo;
+         end if;
+      end If;
+	  end Insertar;
+         
+   procedure Buscarmax (Arbol:in out Tarbol; Maxptr: out Tarbol) is
    begin
-      if Arbol = null then raise Arbolvacio;
-      elsif Valsup = Arbol.Info then Suprimirnodo(Arbol);
-      elsif Valsup < Arbol.Info then Suprimir(Arbol.Izq, Valsup);
-      else Suprimir(Arbol.Der, Valsup);
+      if Arbol.Der = null then 
+         Maxptr:=Arbol;
+         Arbol:=Arbol.Izq;
+      else
+          Buscarmax(Arbol.Der,Maxptr);
+		  end if;
+   end Buscarmax;
+   procedure Suprimirnodo(Arbol:in out Tarbol) is
+      Temp:Tarbol;
+      Suc:Tarbol;
+   begin
+      if Arbol.Izq=null and Arbol.Der=null then Free(Arbol);
+      elsif Arbol.Izq =null then Temp:=Arbol;
+         Arbol:=Arbol.Der;
+         Free(Temp);
+      elsif Arbol.Der=null then Temp:=Arbol;
+	  Arbol:=Arbol.Izq;
+            Free(Temp);
+         else Buscarmax(Arbol.Izq,Suc);
+            Arbol.Info:=Suc.Info;
+            Free(Suc);
+         end if;
+         end suprimirnodo;
+
+   procedure Suprimir (raiz: in out Tarbol;Valsup:in Elemento) is
+   begin
+      if raiz =null then raise Arbolvacio;
+      elsif Valsup=raiz.Info then Suprimirnodo(raiz);
+      elsif Valsup<raiz.Info then Suprimir(raiz.Izq,Valsup);
+      else Suprimir (raiz.Der, Valsup);
       end if;
    end Suprimir;
    
-
-   function Esta  (Raiz: in Tipoarbol; Buscado: in Tipoelem) return Boolean is-- recursiva
-   begin
+   function Esta (Raiz: in Tarbol; Buscado:in Elemento) return Boolean is
+   begin 
       if Vacio(Raiz) then return False;
-      else if Raiz.Info = Buscado then return True;
-         else if Raiz.Info > Buscado then return Esta(Raiz.Izq, Buscado);
-            else return Esta(Raiz.Der, Buscado);
+      else if Raiz.Info=Buscado then return True;
+         else if Raiz.Info>Buscado then return Esta(Raiz.Izq,Buscado);
+            else return Esta(Raiz.Der,Buscado);
             end if;
          end if;
       end if;
    end Esta;
    
-
-   function Izq (Ptr: Tipoarbol) return Tipoarbol is
+   function Izq (Ptr:Tarbol) return Tarbol is 
    begin
-      if Vacio(Ptr) then raise Arbolvacio;
+      if vacio(Ptr) then raise Arbolvacio;
       else return Ptr.Izq;
       end if;
    end Izq;
-   
-
-   function Der (Ptr: Tipoarbol) return Tipoarbol is
+   function der (Ptr:Tarbol) return Tarbol is 
    begin
-      if Vacio(Ptr) then raise Arbolvacio;
-      else return Ptr.Der;
+      if vacio(Ptr) then raise Arbolvacio;
+      else return Ptr.der;
       end if;
-   end Der;
-   
-
-   function Info (Ptr: Tipoarbol) return Tipoelem is
+   end der;
+   function info (Ptr:Tarbol) return elemento is 
    begin
-      if Vacio(Ptr) then raise Arbolvacio;
-      else return Ptr.Info;
+      if vacio(Ptr) then raise Arbolvacio;
+      else return Ptr.info;
       end if;
    end Info;
-   
-
-
-   procedure Inorden (Ptr: in Tipoarbol) is
-   begin
-      if not Vacio(Ptr) then
-         Inorden(Izq(Ptr));
-         Put(Info(Ptr));
-         Inorden(Der(Ptr));
+	
+	function Buscar (Raiz: in Tarbol; Buscado:in Elemento) return Elemento is
+   begin 
+      if Vacio(Raiz) then raise Arbolvacio;
+      else if Raiz.Info=Buscado then 
+         return raiz.info;
+         else if Raiz.Info>Buscado then return buscar(Raiz.Izq,Buscado);
+            else return buscar(Raiz.Der,Buscado);
+            end if;
+         end if;
       end if;
-   end Inorden;
+   end Buscar;
    
-   procedure Preorden (Ptr: in Tipoarbol) is
-   begin
-      if not Vacio(Ptr) then 
-         Put(Info(Ptr));
-         Preorden(Izq(Ptr));
-         Preorden(Der(Ptr));
-      end if;
-   end Preorden;
-   
-
-   procedure Posorden (Ptr: in Tipoarbol) is
-   begin
-      if not Vacio(Ptr) then
-         Posorden(Izq(Ptr));
-         Posorden(Der(Ptr));
-         Put(Info(Ptr));
-      end if;
-   end Posorden;
    end arbol;
+
+
+   
+      
